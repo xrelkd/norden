@@ -1,0 +1,5 @@
+[codespell]
+skip = .git,./target,flake.lock,go.mod,go.sum
+ignore-words = ./dev-support/codespell-ignore
+check-filenames =
+check-hidden =

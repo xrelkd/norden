@@ -15,9 +15,10 @@ import (
 )
 
 type CreateOptions struct {
-	Namespace string
-	PodName   string
-	Image     string
+	Namespace  string
+	PodName    string
+	Image      string
+	PullAlways bool
 }
 
 func runCreate(opts *CreateOptions) error {
@@ -42,6 +43,11 @@ func runCreate(opts *CreateOptions) error {
 		opts.PodName = consts.DefaultPodName
 	}
 
+	imagePullPolicy := v1.PullIfNotPresent
+	if opts.PullAlways {
+		imagePullPolicy = v1.PullAlways
+	}
+
 	pod := &v1.Pod{
 		ObjectMeta: metav1.ObjectMeta{
 			Namespace: opts.Namespace,
@@ -51,8 +57,9 @@ func runCreate(opts *CreateOptions) error {
 		Spec: v1.PodSpec{
 			Containers: []v1.Container{
 				{
-					Name:  consts.ContainerName,
-					Image: opts.Image,
+					Name:            consts.ContainerName,
+					Image:           opts.Image,
+					ImagePullPolicy: imagePullPolicy,
 				},
 			},
 		},
@@ -87,6 +94,7 @@ func Command() *cobra.Command {
 	cmd.Flags().StringVarP(&opts.Namespace, "namespace", "n", "", "Namespace used to create a pod, use current namespace if not provided")
 	cmd.Flags().StringVarP(&opts.PodName, "pod-name", "p", consts.DefaultPodName, "Pod name")
 	cmd.Flags().StringVarP(&opts.Image, "image", "i", consts.DefaultImage, "Container image")
+	cmd.Flags().BoolVar(&opts.PullAlways, "pull-always", false, "Always pull image")
 
 	return cmd
 }

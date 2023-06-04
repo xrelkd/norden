@@ -29,7 +29,7 @@ func runAttach(opts *AttachOptions) error {
 		return err
 	}
 
-	if len(opts.Namespace) == 0 {
+	if opts.Namespace == "" {
 		if ns, err := cmdutils.GetCurrentNamespace(); err != nil {
 			return err
 		} else {
@@ -37,7 +37,7 @@ func runAttach(opts *AttachOptions) error {
 		}
 	}
 
-	if len(opts.PodName) == 0 {
+	if opts.PodName == "" {
 		opts.PodName = consts.DefaultPodName
 	}
 
@@ -47,10 +47,10 @@ func runAttach(opts *AttachOptions) error {
 
 	fmt.Printf("Attach to pod/%v in namespace %v\n", opts.PodName, opts.Namespace)
 
-	term := setupTTY()
+	terminal := setupTTY()
 	errOut := &bytes.Buffer{}
 	tty := true
-	sizeQueue := term.MonitorSize(term.GetSize())
+	sizeQueue := terminal.MonitorSize(terminal.GetSize())
 
 	fn := func() error {
 		restClient, err := restclient.RESTClientFor(restConfig)
@@ -68,8 +68,8 @@ func runAttach(opts *AttachOptions) error {
 		req.VersionedParams(&corev1.PodExecOptions{
 			Container: consts.ContainerName,
 			Command:   opts.Command,
-			Stdin:     term.In != nil,
-			Stdout:    term.Out != nil,
+			Stdin:     terminal.In != nil,
+			Stdout:    terminal.Out != nil,
 			Stderr:    errOut != nil,
 			TTY:       tty,
 		}, scheme.ParameterCodec)
@@ -81,15 +81,15 @@ func runAttach(opts *AttachOptions) error {
 
 		return exec.StreamWithContext(context.Background(),
 			remotecommand.StreamOptions{
-				Stdin:             term.In,
-				Stdout:            term.Out,
+				Stdin:             terminal.In,
+				Stdout:            terminal.Out,
 				Stderr:            errOut,
 				Tty:               tty,
 				TerminalSizeQueue: sizeQueue,
 			})
 	}
 
-	return term.Safe(fn)
+	return terminal.Safe(fn)
 }
 
 func Command() *cobra.Command {
@@ -114,12 +114,11 @@ func Command() *cobra.Command {
 
 func setupTTY() term.TTY {
 	stdin, stdout, _ := dockerterm.StdStreams()
-	term := term.TTY{
+
+	return term.TTY{
 		Parent: nil,
 		In:     stdin,
 		Out:    stdout,
 		Raw:    true,
 	}
-
-	return term
 }

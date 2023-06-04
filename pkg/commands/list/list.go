@@ -23,8 +23,9 @@ func runList(opts *ListOptions) error {
 		return err
 	}
 
-	if len(opts.Namespace) == 0 && !opts.AllNamespaces {
-		if ns, err := cmdutils.GetCurrentNamespace(); err != nil {
+	if opts.Namespace == "" && !opts.AllNamespaces {
+		var ns string
+		if ns, err = cmdutils.GetCurrentNamespace(); err != nil {
 			return err
 		} else {
 			opts.Namespace = ns
@@ -65,7 +66,8 @@ func displayPods(pods *v1.PodList) {
 	table.SetTablePadding("\t") // pad with tabs
 	table.SetNoWhiteSpace(true)
 
-	for _, pod := range pods.Items {
+	for i := range pods.Items {
+		pod := &pods.Items[i]
 		table.Append([]string{
 			pod.Name,
 			pod.Spec.Containers[0].Image,

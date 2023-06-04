@@ -27,19 +27,20 @@ func runCreate(opts *CreateOptions) error {
 		return err
 	}
 
-	if len(opts.Namespace) == 0 {
-		if ns, err := cmdutils.GetCurrentNamespace(); err != nil {
+	if opts.Namespace == "" {
+		var ns string
+		if ns, err = cmdutils.GetCurrentNamespace(); err != nil {
 			return err
 		} else {
 			opts.Namespace = ns
 		}
 	}
 
-	if len(opts.Image) == 0 {
+	if opts.Image == "" {
 		opts.Image = consts.DefaultImage
 	}
 
-	if len(opts.PodName) == 0 {
+	if opts.PodName == "" {
 		opts.PodName = consts.DefaultPodName
 	}
 

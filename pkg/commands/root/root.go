@@ -29,10 +29,10 @@ func Command() *cobra.Command {
 		},
 	}
 
-	cmd.AddCommand(create.Command())
 	cmd.AddCommand(attach.Command())
-	cmd.AddCommand(list.Command())
+	cmd.AddCommand(create.Command())
 	cmd.AddCommand(delete.Command())
+	cmd.AddCommand(list.Command())
 
 	cmd.AddCommand(version.Command())
 	cmd.AddCommand(completion.Command())

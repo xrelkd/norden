@@ -8,6 +8,7 @@ import (
 	"github.com/xrelkd/norden/pkg/commands/completion"
 	"github.com/xrelkd/norden/pkg/commands/create"
 	"github.com/xrelkd/norden/pkg/commands/delete"
+	"github.com/xrelkd/norden/pkg/commands/image"
 	"github.com/xrelkd/norden/pkg/commands/list"
 	"github.com/xrelkd/norden/pkg/commands/version"
 )
@@ -32,6 +33,7 @@ func Command() *cobra.Command {
 	cmd.AddCommand(attach.Command())
 	cmd.AddCommand(create.Command())
 	cmd.AddCommand(delete.Command())
+	cmd.AddCommand(image.Command())
 	cmd.AddCommand(list.Command())
 
 	cmd.AddCommand(version.Command())

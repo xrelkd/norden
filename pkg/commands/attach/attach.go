@@ -163,7 +163,7 @@ func Command() *cobra.Command {
 	cmd.Flags().StringVarP(&opts.Namespace, "namespace", "n", "", "Namespace")
 	cmd.Flags().StringVarP(&opts.PodName, "pod-name", "p", conf.DefaultPodName, "Pod name")
 	cmd.Flags().StringArrayVarP(&opts.InterativeShell, "shell", "s",
-		consts.DefaultInteractiveShell, "Interactive shell used to attach container")
+		[]string{}, "Interactive shell used to attach container")
 
 	return cmd
 }

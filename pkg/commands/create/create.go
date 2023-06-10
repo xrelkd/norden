@@ -18,13 +18,13 @@ import (
 )
 
 type CreateOptions struct {
-	Namespace       string
-	PodName         string
-	Image           string
-	ImagePullPolicy v1.PullPolicy
-	Command         []string
-	Args            []string
-	Shell           []string
+	Namespace        string
+	PodName          string
+	Image            string
+	ImagePullPolicy  v1.PullPolicy
+	Command          []string
+	Args             []string
+	InteractiveShell []string
 }
 
 func runCreate(opts *CreateOptions) error {
@@ -50,7 +50,7 @@ func runCreate(opts *CreateOptions) error {
 		opts.PodName = consts.DefaultPodName
 	}
 
-	nordenShellJSON, _ := json.Marshal(opts.Shell)
+	nordenShellJSON, _ := json.Marshal(opts.InteractiveShell)
 
 	pod := &v1.Pod{
 		ObjectMeta: metav1.ObjectMeta{
@@ -120,7 +120,7 @@ func Command() *cobra.Command {
 
 	cmd.Flags().StringArrayVar(&opts.Command, "command", confImage.Command, "Command")
 	cmd.Flags().StringArrayVar(&opts.Args, "args", confImage.Args, "Arguments")
-	cmd.Flags().StringArrayVar(&opts.Shell, "shell", confImage.InteractiveShell, "Interactive shell")
+	cmd.Flags().StringArrayVar(&opts.InteractiveShell, "shell", confImage.InteractiveShell, "Interactive shell")
 
 	return cmd
 }

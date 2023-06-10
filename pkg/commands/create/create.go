@@ -61,6 +61,7 @@ func runCreate(opts *CreateOptions) error {
 			},
 			Annotations: map[string]string{
 				consts.InteractiveShellAnnotationKey: string(nordenShellJSON),
+				consts.NordenVersionAnnotationKey:    version.Version,
 			},
 		},
 		Spec: v1.PodSpec{

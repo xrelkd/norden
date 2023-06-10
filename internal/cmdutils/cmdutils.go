@@ -28,12 +28,11 @@ func GetCurrentNamespace() (string, error) {
 	if config.CurrentContext == "" {
 		err = fmt.Errorf("current-context is not set")
 		return "", err
-
 	}
 
 	currentNamespace := config.Contexts[config.CurrentContext].Namespace
 
-	if len(currentNamespace) == 0 {
+	if currentNamespace == "" {
 		return "default", nil
 	} else {
 		return currentNamespace, nil

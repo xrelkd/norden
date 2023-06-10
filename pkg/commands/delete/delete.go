@@ -16,8 +16,8 @@ type DeleteOptions struct {
 }
 
 func runDelete(opts *DeleteOptions) error {
-	if len(opts.PodName) == 0 {
-		return fmt.Errorf("No pod name is provided")
+	if opts.PodName == "" {
+		return fmt.Errorf("no pod name is provided")
 	}
 
 	clientset, _, err := cmdutils.CreateClientset()
@@ -25,8 +25,9 @@ func runDelete(opts *DeleteOptions) error {
 		return err
 	}
 
-	if len(opts.Namespace) == 0 {
-		if ns, err := cmdutils.GetCurrentNamespace(); err != nil {
+	if opts.Namespace == "" {
+		var ns string
+		if ns, err = cmdutils.GetCurrentNamespace(); err != nil {
 			return err
 		} else {
 			opts.Namespace = ns

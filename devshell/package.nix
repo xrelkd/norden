@@ -11,7 +11,7 @@ buildGoModule rec {
 
   src = lib.cleanSource ./..;
 
-  vendorHash = "sha256-8P4CFh+ufDIG2Ht8jpOlmXe0ZAB9Gapokn8zmw2QB/o=";
+  vendorHash = "sha256-BQ9l8/rmvf/HG1TwpdoZNQ06dpqzXD+30jFL0us2IwU=";
 
   subPackages = [ "cmd/norden" ];
 

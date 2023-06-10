@@ -2,8 +2,10 @@ package create
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 
+	"github.com/kris-nova/logger"
 	"github.com/spf13/cobra"
 
 	v1 "k8s.io/api/core/v1"
@@ -11,14 +13,18 @@ import (
 
 	"github.com/xrelkd/norden/internal/cmdutils"
 	"github.com/xrelkd/norden/internal/consts"
+	"github.com/xrelkd/norden/pkg/config"
 	"github.com/xrelkd/norden/pkg/version"
 )
 
 type CreateOptions struct {
-	Namespace  string
-	PodName    string
-	Image      string
-	PullAlways bool
+	Namespace       string
+	PodName         string
+	Image           string
+	ImagePullPolicy v1.PullPolicy
+	Command         []string
+	Args            []string
+	Shell           []string
 }
 
 func runCreate(opts *CreateOptions) error {
@@ -44,23 +50,27 @@ func runCreate(opts *CreateOptions) error {
 		opts.PodName = consts.DefaultPodName
 	}
 
-	imagePullPolicy := v1.PullIfNotPresent
-	if opts.PullAlways {
-		imagePullPolicy = v1.PullAlways
-	}
+	nordenShellJSON, _ := json.Marshal(opts.Shell)
 
 	pod := &v1.Pod{
 		ObjectMeta: metav1.ObjectMeta{
 			Namespace: opts.Namespace,
 			Name:      opts.PodName,
-			Labels:    map[string]string{"app.kubernetes.io/managed-by": version.AppName},
+			Labels: map[string]string{
+				"app.kubernetes.io/managed-by": version.AppName,
+			},
+			Annotations: map[string]string{
+				consts.InteractiveShellAnnotationKey: string(nordenShellJSON),
+			},
 		},
 		Spec: v1.PodSpec{
 			Containers: []v1.Container{
 				{
 					Name:            consts.ContainerName,
 					Image:           opts.Image,
-					ImagePullPolicy: imagePullPolicy,
+					ImagePullPolicy: opts.ImagePullPolicy,
+					Command:         opts.Command,
+					Args:            opts.Args,
 				},
 			},
 		},
@@ -80,6 +90,8 @@ func runCreate(opts *CreateOptions) error {
 }
 
 func Command() *cobra.Command {
+	conf, err := config.Load()
+
 	opts := &CreateOptions{}
 
 	cmd := &cobra.Command{
@@ -88,14 +100,27 @@ func Command() *cobra.Command {
 		Long:    "Create new pod in a specified namespace",
 		Aliases: []string{"c"},
 		RunE: func(cmd *cobra.Command, args []string) error {
+			if err != nil {
+				logger.Warning("%v", err)
+			}
+
 			return runCreate(opts)
 		},
 	}
 
+	confImage := conf.GetImage()
+
 	cmd.Flags().StringVarP(&opts.Namespace, "namespace", "n", "", "Namespace used to create a pod, use current namespace if not provided")
-	cmd.Flags().StringVarP(&opts.PodName, "pod-name", "p", consts.DefaultPodName, "Pod name")
-	cmd.Flags().StringVarP(&opts.Image, "image", "i", consts.DefaultImage, "Container image")
-	cmd.Flags().BoolVar(&opts.PullAlways, "pull-always", false, "Always pull image")
+	cmd.Flags().StringVarP(&opts.PodName, "pod-name", "p", conf.DefaultPodName, "Pod name")
+	cmd.Flags().StringVarP(&opts.Image, "image", "i", confImage.Image, "Container image")
+
+	imagePullPolicy := ""
+	cmd.Flags().StringVar(&imagePullPolicy, "image-pull-policy", string(confImage.ImagePullPolicy), "Image pull policy")
+	opts.ImagePullPolicy = v1.PullPolicy(imagePullPolicy)
+
+	cmd.Flags().StringArrayVar(&opts.Command, "command", confImage.Command, "Command")
+	cmd.Flags().StringArrayVar(&opts.Args, "args", confImage.Args, "Arguments")
+	cmd.Flags().StringArrayVar(&opts.Shell, "shell", confImage.InteractiveShell, "Interactive shell")
 
 	return cmd
 }

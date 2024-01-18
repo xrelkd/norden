@@ -5,11 +5,11 @@ on:
     branches:
       - main
       - develop
-      - release/*
-      - hotfix/*
+      - ci/*
       - feat/*
       - feature/*
-      - ci/*
+      - hotfix/*
+      - release/*
 
   pull_request:
     paths:
@@ -17,6 +17,8 @@ on:
       - "devshell/**"
       - "internal/**"
       - "pkg/**"
+      - "go.mod"
+      - "go.sum"
 
 jobs:
   golangci-linter:
@@ -33,13 +35,13 @@ jobs:
 
       - uses: actions/setup-go@v5
         with:
-          go-version: "~1.20"
+          go-version: "~1.21"
           check-latest: true
 
       - name: golangci-lint
         uses: golangci/golangci-lint-action@v3
         with:
-          version: v1.53
+          version: v1.55
           args: --timeout 10m
           # Optional: show only new issues if it's a pull request. The default value is `false`.
           # only-new-issues: true
@@ -50,12 +52,12 @@ jobs:
       fail-fast: false
       matrix:
         goos: ["linux", "windows", "darwin"]
-        go: ["1.20"]
+        go: ["1.21"]
         include:
           # Set the minimum Go patch version for the given Go minor
           # Usable via ${{ matrix.GO_SEMVER }}
-          - go: "1.20"
-            GO_SEMVER: "~1.20.1"
+          - go: "1.21"
+            GO_SEMVER: "~1.21.5"
 
     runs-on: ubuntu-latest
     needs:

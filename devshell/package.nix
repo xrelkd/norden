@@ -1,8 +1,9 @@
-{ name
-, version
-, lib
-, buildGoModule
-, installShellFiles
+{
+  name,
+  version,
+  lib,
+  buildGoModule,
+  installShellFiles,
 }:
 
 buildGoModule rec {
@@ -11,7 +12,7 @@ buildGoModule rec {
 
   src = lib.cleanSource ./..;
 
-  vendorHash = "sha256-g1xHsz8tMZVGE17wEmye587QP5FQvdy4ztp68HV9Up8=";
+  vendorHash = "sha256-feYLhbDWON8bmoHqJsOBoiHvmReVdoTKmMwFUuvg9e4=";
 
   subPackages = [ "cmd/norden" ];
 

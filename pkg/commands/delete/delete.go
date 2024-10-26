@@ -38,7 +38,6 @@ func runDelete(opts *DeleteOptions) error {
 		CoreV1().
 		Pods(opts.Namespace).
 		Delete(context.Background(), opts.PodName, metav1.DeleteOptions{})
-
 	if err != nil {
 		return err
 	}

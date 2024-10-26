@@ -80,7 +80,6 @@ func runCreate(opts *CreateOptions) error {
 		CoreV1().
 		Pods(opts.Namespace).
 		Create(context.Background(), pod, metav1.CreateOptions{})
-
 	if err != nil {
 		return err
 	}

@@ -1,8 +1,9 @@
-{ name
-, version
-, lib
-, buildGoModule
-, installShellFiles
+{
+  name,
+  version,
+  lib,
+  buildGoModule,
+  installShellFiles,
 }:
 
 buildGoModule rec {

@@ -1,5 +1,6 @@
-{ pkgs
-, ...
+{
+  pkgs,
+  ...
 }:
 
 pkgs.mkShell {
@@ -18,7 +19,8 @@ pkgs.mkShell {
     treefmt
 
     jq
-    nixpkgs-fmt
+    taplo
+    nixfmt-rfc-style
     shfmt
     nodePackages.prettier
 

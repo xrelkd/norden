@@ -5,7 +5,7 @@ go 1.21
 toolchain go1.21.5
 
 require (
-	github.com/adrg/xdg v0.5.2
+	github.com/adrg/xdg v0.5.3
 	github.com/kris-nova/logger v0.2.2
 	github.com/moby/term v0.5.2
 	github.com/olekukonko/tablewriter v0.0.5
